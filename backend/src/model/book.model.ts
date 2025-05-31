@@ -74,7 +74,7 @@ export const BookResolver = {
         bookUpdate: async (_: any, { id, input }: any, { req }: GraphContext) => {
             authMiddlewareGraphql(req);
             const book = await prisma.booking.update({
-                where: { id },
+                where: { id, userId: req.user?.id },
                 data: input
             })
             return book;
@@ -82,7 +82,7 @@ export const BookResolver = {
         bookDelete: async (_: any, { id }: any, { req }: GraphContext) => {
             authMiddlewareGraphql(req);
             const book = await prisma.booking.delete({
-                where: { id }
+                where: { id, userId: req.user?.id }
             })
             return book;
         }
