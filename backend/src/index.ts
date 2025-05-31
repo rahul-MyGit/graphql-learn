@@ -7,6 +7,8 @@ import { ENV } from './config';
 import http from 'http';
 import { typeDefs, resolvers } from './lib/graphql/schema.js';
 import { GraphContext } from './types';
+import { authRouter } from './routes/auth';
+import { protectedRouter } from './routes/protected';
 
 
 const app = express();
@@ -34,6 +36,12 @@ async function init() {
         initMiddleware(app);
 
         app.get('/', (_, res) => res.send('Hello World'));
+
+        // Add auth routes
+        app.use('/api/auth', authRouter);
+        
+        // Add protected routes
+        app.use('/api', protectedRouter);
 
         app.use(ENV.GRAPHQL_PATH, expressMiddleware(apolloServer, {
             context: async ({ req }) => {

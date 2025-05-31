@@ -34,11 +34,11 @@ export const BookTypeDef = gql`
 export const BookResolver = {
     Mutation: {
         bookCreate: async (_: any, {input}: any, {req}: GraphContext) => {
-            await authMiddlewareGraphql(req);
+            authMiddlewareGraphql(req);
             const book = await prisma.booking.create({
                 data: {
                     ...input,
-                    // userId: req.user.id,
+                    userId: req.user?.id,
                 }
             })
             return book;

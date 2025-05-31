@@ -1,5 +1,7 @@
 import dotenv from 'dotenv';
+import { PrismaClient } from '../../generated/prisma';
 
+export const prisma = new PrismaClient();
 dotenv.config();
 
 export const ENV = {
@@ -9,3 +11,4 @@ export const ENV = {
     NODE_ENV: process.env.NODE_ENV || 'development',
     AUTH_TOKEN: process.env.AUTH_TOKEN || 'auth-token',
 }
+

@@ -1,8 +1,8 @@
 import { GraphQLError } from 'graphql';
 import { Request } from 'express';
-import { ENV } from '../../config';
+import { verifyToken } from '../../lib/jwt';
 
-export const authMiddlewareGraphql = ( req: Request) => {
+export const authMiddlewareGraphql = (req: Request) => {
     const authHeader = req.headers?.authorization ?? '';
 
     if (!authHeader) {
@@ -15,7 +15,7 @@ export const authMiddlewareGraphql = ( req: Request) => {
 
     const token = authHeader.split(' ')[1];
 
-    if (token !== ENV.AUTH_TOKEN) {
+    if (!token) {
         throw new GraphQLError('Not authorized', {
             extensions: {
                 code: 'UNAUTHENTICATED',
@@ -23,6 +23,19 @@ export const authMiddlewareGraphql = ( req: Request) => {
         });
     }
 
-    return;
+    try {
+        const decoded = verifyToken(token);
+        req.user = {
+            id: decoded.id,
+            email: decoded.email,
+        };
+    } catch (error) {
+        throw new GraphQLError('Invalid token', {
+            extensions: {
+                code: 'UNAUTHENTICATED',
+            },
+        });
+    }
 
+    return;
 }

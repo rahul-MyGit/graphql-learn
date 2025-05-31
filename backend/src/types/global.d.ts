@@ -1,3 +1,5 @@
+import { Request } from 'express';
+
 export {}
 
 declare global {
@@ -8,6 +10,16 @@ declare global {
             GRAPHQL_PATH: string;
             DATABASE_URI: string;
             AUTH_TOKEN: string;
+            JWT_SECRET: string;
+        }
+    }
+
+    namespace Express {
+        interface Request {
+            user?: {
+                id: string;
+                email: string;
+            }
         }
     }
 }
