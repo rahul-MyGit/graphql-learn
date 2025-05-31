@@ -33,12 +33,14 @@ export const BookTypeDef = gql`
 
     extend type Mutation {
         bookCreate(input: BookInput!): Book
+        bookUpdate(id: ID!, input: BookInput!): Book
+        bookDelete(id: ID!): Book
     }
 `
 
 export const BookResolver = {
     Query: {
-        bookList: async (_: any, __: any, {req}: GraphContext) => {
+        bookList: async (_: any, __: any, { req }: GraphContext) => {
             authMiddlewareGraphql(req);
             const books = await prisma.booking.findMany({
                 where: {
@@ -50,7 +52,7 @@ export const BookResolver = {
             });
             return books;
         },
-        book: async (_: any, {id}: any, {req}: GraphContext) => {
+        book: async (_: any, { id }: any, { req }: GraphContext) => {
             authMiddlewareGraphql(req);
             const book = await prisma.booking.findUnique({
                 where: { id }
@@ -59,13 +61,28 @@ export const BookResolver = {
         }
     },
     Mutation: {
-        bookCreate: async (_: any, {input}: any, {req}: GraphContext) => {
+        bookCreate: async (_: any, { input }: any, { req }: GraphContext) => {
             authMiddlewareGraphql(req);
             const book = await prisma.booking.create({
                 data: {
                     ...input,
                     userId: req.user?.id,
                 }
+            })
+            return book;
+        },
+        bookUpdate: async (_: any, { id, input }: any, { req }: GraphContext) => {
+            authMiddlewareGraphql(req);
+            const book = await prisma.booking.update({
+                where: { id },
+                data: input
+            })
+            return book;
+        },
+        bookDelete: async (_: any, { id }: any, { req }: GraphContext) => {
+            authMiddlewareGraphql(req);
+            const book = await prisma.booking.delete({
+                where: { id }
             })
             return book;
         }
