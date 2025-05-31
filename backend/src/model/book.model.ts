@@ -1,9 +1,8 @@
 import { gql } from 'graphql-tag';
-import _ from 'lodash';
-import { GraphContext } from './common';
+import { GraphContext } from '../types/common';
 
 import { PrismaClient } from '../../generated/prisma'
-
+import { authMiddlewareGraphql } from '../middleware';
 const prisma = new PrismaClient()
 
 export const BookTypeDef = gql`
@@ -35,6 +34,7 @@ export const BookTypeDef = gql`
 export const BookResolver = {
     Mutation: {
         bookCreate: async (_: any, {input}: any, {req}: GraphContext) => {
+            await authMiddlewareGraphql(req);
             const book = await prisma.booking.create({
                 data: {
                     ...input,
